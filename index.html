@@ -3,99 +3,258 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Smart Study Planner</title>
+  <title>Smart Study Planner - Dashboard</title>
   <link rel="stylesheet" href="style.css" />
   <script src="script.js" defer></script>
 </head>
 <body>
-  <div class="app">
-    <header>
-      <div>
-        <h1>Smart Study Planner</h1>
-        <div style="color:var(--muted);font-size:13px">Create study goals, set reminders & view a visual timeline.</div>
+  <div class="dashboard">
+    <!-- Header -->
+    <header class="dashboard-header">
+      <div class="header-left">
+        <h1>📚 Smart Study Planner</h1>
+        <div class="header-subtitle">Your personalized study dashboard</div>
       </div>
-      <div class="controls">
-        <button id="notifyPerm">Enable Notifications</button>
-        <button id="exportBtn" class="ghost">Export</button>
-        <button id="importBtn" class="ghost">Import</button>
+      <div class="header-actions">
+        <button id="notifyPerm" class="btn-icon" title="Enable Notifications">🔔</button>
+        <button id="exportBtn" class="btn-ghost">Export</button>
+        <button id="importBtn" class="btn-ghost">Import</button>
       </div>
     </header>
 
-    <main>
-      <section class="card">
-        <h3 style="margin-top:0">Add / Edit Task</h3>
-        <form id="taskForm">
-          <div class="row">
-            <div style="flex:1">
-              <label>Title</label>
-              <input id="title" required />
-            </div>
-            <div style="width:110px">
-              <label>Subject</label>
-              <input id="subject" placeholder="e.g. Math" />
-            </div>
-          </div>
-
-          <div class="row">
-            <div style="flex:1">
-              <label>Start Date</label>
-              <input type="date" id="start" required />
-            </div>
-            <div style="width:160px">
-              <label>Due Date</label>
-              <input type="date" id="due" required />
-            </div>
-          </div>
-
-          <div class="row">
-            <div style="flex:1">
-              <label>Estimated Hours</label>
-              <input type="number" id="hours" min="0" step="0.5" placeholder="2" />
-            </div>
-            <div style="width:120px">
-              <label>Priority</label>
-              <select id="priority"><option value="low">Low</option><option value="med" selected>Medium</option><option value="high">High</option></select>
-            </div>
-          </div>
-
-          <div>
-            <label>Notes</label>
-            <textarea id="notes" placeholder="What to study... (chapters, topics)"></textarea>
-          </div>
-
-          <div class="row" style="margin-top:10px;align-items:center">
-            <div style="flex:1">
-              <label>Reminder (mins before due)</label>
-              <input type="number" id="reminder" min="0" placeholder="30" />
-            </div>
-            <div style="width:120px;display:flex;align-items:end;justify-content:flex-end">
-              <button type="submit">Save Task</button>
-            </div>
-          </div>
-
-          <input type="hidden" id="editingId" />
-        </form>
-
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px">
-          <div style="color:var(--muted);font-size:13px">Your tasks</div>
-          <div style="font-size:13px;color:var(--muted)" id="taskCount">0</div>
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar">
+      <div class="nav-items">
+        <a href="#" class="nav-item active" data-section="overview">
+          <span class="nav-icon">📊</span>
+          <span class="nav-text">Overview</span>
+        </a>
+        <a href="#" class="nav-item" data-section="tasks">
+          <span class="nav-icon">📋</span>
+          <span class="nav-text">Tasks</span>
+        </a>
+        <a href="#" class="nav-item" data-section="timeline">
+          <span class="nav-icon">📅</span>
+          <span class="nav-text">Timeline</span>
+        </a>
+        <a href="#" class="nav-item" data-section="analytics">
+          <span class="nav-icon">📈</span>
+          <span class="nav-text">Analytics</span>
+        </a>
+      </div>
+      <div class="nav-footer">
+        <div class="storage-info">
+          <small>Data saved locally</small>
         </div>
+      </div>
+    </nav>
 
-        <div class="task-list card" id="taskList" style="background:transparent;padding:8px;margin-top:8px"></div>
+    <!-- Main Content -->
+    <main class="dashboard-content">
+      
+      <!-- Overview Section -->
+      <section class="section active" id="overview-section">
+        <div class="section-header">
+          <h2>Dashboard Overview</h2>
+          <p class="section-subtitle">Quick snapshot of your study progress</p>
+        </div>
+        
+        <div class="dashboard-grid">
+          <!-- Stats Cards -->
+          <div class="widget stats-widget">
+            <h3>Study Statistics</h3>
+            <div class="stats-grid">
+              <div class="stat-card">
+                <div class="stat-number" id="totalTasks">0</div>
+                <div class="stat-label">Total Tasks</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-number" id="completedTasks">0</div>
+                <div class="stat-label">Completed</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-number" id="pendingTasks">0</div>
+                <div class="stat-label">Pending</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-number" id="overdueCount">0</div>
+                <div class="stat-label">Overdue</div>
+              </div>
+            </div>
+          </div>
 
+          <!-- Quick Actions Widget -->
+          <div class="widget quick-actions-widget">
+            <h3>Quick Actions</h3>
+            <div class="quick-actions">
+              <button id="overviewAddTaskBtn" class="btn-primary btn-large">
+                <span>➕</span> Add New Task
+              </button>
+              <p class="action-description">Create a new study task with detailed options</p>
+            </div>
+          </div>
+
+          <!-- Recent Tasks Widget -->
+          <div class="widget recent-tasks-widget">
+            <h3>Recent Tasks</h3>
+            <div id="recentTasksList" class="recent-tasks-list">
+              <!-- Recent tasks will be populated here -->
+            </div>
+          </div>
+
+          <!-- Upcoming Deadlines Widget -->
+          <div class="widget deadlines-widget">
+            <h3>Upcoming Deadlines</h3>
+            <div id="upcomingDeadlines" class="deadlines-list">
+              <!-- Upcoming deadlines will be populated here -->
+            </div>
+          </div>
+        </div>
       </section>
 
-      <section>
-        <div class="card" style="height:100%">
-          <div class="timeline-header">
-            <div>
-              <strong>Timeline</strong>
-              <div style="color:var(--muted);font-size:13px">Next 14 days</div>
+      <!-- Tasks Section -->
+      <section class="section" id="tasks-section">
+        <div class="section-header">
+          <div class="section-title-group">
+            <h2>Task Management</h2>
+            <p class="section-subtitle">Create, edit, and manage your study tasks</p>
+          </div>
+          <button id="addTaskBtn" class="btn-primary">
+            <span>➕</span> Add Task
+          </button>
+        </div>
+
+        <div class="tasks-layout">
+          <div class="task-list-widget widget full-width">
+            <div class="widget-header">
+              <h3>All Tasks</h3>
+              <div class="task-count" id="taskCount">0 tasks</div>
             </div>
-            <div style="display:flex;gap:8px;align-items:center">
-              <button id="prevRange" class="ghost">◀</button>
-              <button id="nextRange" class="ghost">▶</button>
-              <button id="zoomBtn" class="ghost">Zoom</button>
+            <div class="task-list" id="taskList">
+              <!-- Tasks will be populated here -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Task Modal -->
+      <div id="taskModal" class="modal-overlay">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3 id="modalTitle">Add New Task</h3>
+            <button id="closeModalBtn" class="btn-close">✕</button>
+          </div>
+          <div class="modal-body">
+            <form id="taskForm">
+              <div class="form-row">
+                <div class="form-group flex-1">
+                  <label>Title</label>
+                  <input id="title" title="Task title" required />
+                </div>
+                <div class="form-group">
+                  <label>Subject</label>
+                  <input id="subject" placeholder="e.g. Math" />
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group flex-1">
+                  <label>Start Date</label>
+                  <input type="date" id="start" title="Start date" required />
+                </div>
+                <div class="form-group">
+                  <label>Due Date</label>
+                  <input type="date" id="due" title="Due date" required />
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group flex-1">
+                  <label>Estimated Hours</label>
+                  <input type="number" id="hours" min="0" step="0.5" placeholder="2" />
+                </div>
+                <div class="form-group">
+                  <label>Priority</label>
+                  <select id="priority" title="Task priority">
+                    <option value="low">Low</option>
+                    <option value="med" selected>Medium</option>
+                    <option value="high">High</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>Notes</label>
+                <textarea id="notes" placeholder="What to study... (chapters, topics)"></textarea>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group flex-1">
+                  <label>Reminder (mins before due)</label>
+                  <input type="number" id="reminder" min="0" placeholder="30" />
+                </div>
+              </div>
+
+              <input type="hidden" id="editingId" />
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" id="cancelBtn" class="btn-ghost">Cancel</button>
+            <button type="submit" form="taskForm" class="btn-primary">Save Task</button>
+          </div>
+        </div>
+      </div>
+      </section>
+
+      <!-- Timeline Section -->
+      <section class="section" id="timeline-section">
+        <div class="section-header">
+          <h2>Study Timeline</h2>
+          <p class="section-subtitle">Visual timeline of your study schedule</p>
+        </div>
+
+        <div class="timeline-widget widget">
+          <div class="timeline-controls">
+            <div class="timeline-info">
+              <h3>Timeline View</h3>
+              <div class="timeline-subtitle" id="timelineRange">Next 7 days</div>
+            </div>
+            <div class="timeline-actions">
+              <button id="todayBtn" class="btn-ghost" title="Go to today">📅 Today</button>
+              <button id="prevRange" class="btn-ghost" title="Previous week">◀</button>
+              <button id="nextRange" class="btn-ghost" title="Next week">▶</button>
+              <select id="viewRange" class="timeline-select" title="Select time range">
+                <option value="7">7 days</option>
+                <option value="14">14 days</option>
+                <option value="30">30 days</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="timeline-filters">
+            <div class="filter-group">
+              <label>Filter by Priority:</label>
+              <select id="priorityFilter" class="filter-select" title="Filter by priority">
+                <option value="all">All Priorities</option>
+                <option value="high">High Priority</option>
+                <option value="med">Medium Priority</option>
+                <option value="low">Low Priority</option>
+              </select>
+            </div>
+            <div class="filter-group">
+              <label>Filter by Subject:</label>
+              <select id="subjectFilter" class="filter-select" title="Filter by subject">
+                <option value="all">All Subjects</option>
+              </select>
+            </div>
+            <div class="filter-group">
+              <label>Show:</label>
+              <select id="statusFilter" class="filter-select" title="Filter by status">
+                <option value="all">All Tasks</option>
+                <option value="pending">Pending Only</option>
+                <option value="completed">Completed Only</option>
+                <option value="overdue">Overdue Only</option>
+              </select>
             </div>
           </div>
 
@@ -104,22 +263,57 @@
             <div class="bars" id="bars"></div>
           </div>
 
-          <div style="margin-top:10px">
-            <div style="display:flex;gap:10px;align-items:center">
-              <span class="tag">Click a task to edit</span>
-              <span class="tag">Reminders use Notifications API (grant permission)</span>
+          <div class="timeline-help">
+            <div class="help-section">
+              <span class="help-tag">💡 Tips:</span>
+              <span class="help-tag">Click task bars to edit</span>
+              <span class="help-tag">Use filters to focus</span>
+              <span class="help-tag">Navigate with arrow buttons</span>
+            </div>
+            <div class="timeline-legend">
+              <span class="legend-item"><span class="legend-color high"></span>High Priority</span>
+              <span class="legend-item"><span class="legend-color med"></span>Medium Priority</span>
+              <span class="legend-item"><span class="legend-color low"></span>Low Priority</span>
+              <span class="legend-item"><span class="legend-color done"></span>Completed</span>
             </div>
           </div>
         </div>
-
       </section>
-    </main>
 
-    <footer>
-      Built with ❤️ — data saved in your browser (localStorage).
-    </footer>
+      <!-- Analytics Section -->
+      <section class="section" id="analytics-section">
+        <div class="section-header">
+          <h2>Study Analytics</h2>
+          <p class="section-subtitle">Track your study patterns and productivity</p>
+        </div>
+
+        <div class="analytics-grid">
+          <div class="widget progress-widget">
+            <h3>Weekly Progress</h3>
+            <div id="weeklyProgress" class="progress-chart">
+              <!-- Progress chart will be populated here -->
+            </div>
+          </div>
+
+          <div class="widget subjects-widget">
+            <h3>Subject Distribution</h3>
+            <div id="subjectBreakdown" class="subject-breakdown">
+              <!-- Subject breakdown will be populated here -->
+            </div>
+          </div>
+
+          <div class="widget productivity-widget">
+            <h3>Productivity Insights</h3>
+            <div id="productivityInsights" class="insights-list">
+              <!-- Insights will be populated here -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
   </div>
 
-  <input type="file" id="fileInput" style="display:none" accept="application/json" />
+  <input type="file" id="fileInput" class="hidden" accept="application/json" title="Import tasks file" />
 </body>
 </html>
